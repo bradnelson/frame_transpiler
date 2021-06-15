@@ -92,6 +92,7 @@ pub struct RustVisitor {
     generate_state_stack:bool,
     generate_change_state:bool,
     generate_transition_state:bool,
+    scope:String,
     current_message:String,
 }
 
@@ -105,6 +106,7 @@ impl RustVisitor {
                   , generate_state_stack:bool
                   , generate_change_state:bool
                   , generate_transition_state:bool
+                  , scope:String
                   , compiler_version:&str
                   , comments:Vec<Token>) -> RustVisitor {
 
@@ -134,6 +136,7 @@ impl RustVisitor {
             generate_state_stack,
             generate_change_state,
             generate_transition_state,
+            scope,
             current_message:String::new(),
         }
     }
@@ -1622,7 +1625,11 @@ impl AstVisitor for RustVisitor {
         self.add_code("// System Controller ");
         self.newline();
         self.newline();
-        self.add_code(&format!("pub struct {} {{", self.system_name));
+        if self.scope.len() == 0 {
+            self.add_code(&format!("pub struct {} {{", self.system_name));
+        } else {
+            self.add_code(&format!("pub struct {}<'{}> {{", self.system_name, self.scope));
+        }
         self.indent();
         self.newline();
 

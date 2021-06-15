@@ -92,11 +92,15 @@ impl Exe {
         let generate_change_state = semantic_parser.generate_change_state;
         let generate_transition_state = semantic_parser.generate_transition_state;
 
+        let mut scope = "".to_string();
 
         match &system_node.attributes_opt {
             Some(attributes) => {
                 if let Some(language) = attributes.get("language"){
                     output_format = language.value.clone();
+                }
+                if let Some(scope_attrib) = attributes.get("scope") {
+                    scope = scope_attrib.value.clone();
                 }
             },
             None => {},
@@ -202,6 +206,7 @@ impl Exe {
                                              , generate_state_stack
                                              , generate_change_state
                                              , generate_transition_state
+                                             , scope
                                              , FRAMEC_VERSION
                                              , comments);
             visitor.run(&system_node);
